@@ -1,0 +1,41 @@
+# Usefull functions :
+
+pivot_longer : Use, if some of your column names are actually values of a variable. Alternatively you can use gather(), but it is recommended to use pivot_longer(), because the other function is no longer being maintained.
+
+pivot_wider(): Use, if some of your observations are scattered across many rows. Alternatively you can use spread(), but it is recommended to use pivot_wider(), because the other function is no longer being maintained.
+
+separate(): If some of your columns contain more than one value, use separate
+
+unite(): use to paste together multiple columns into one
+
+filter(): picks cases based on their values (formula based filtering).
+
+slice(): for filtering with row numbers. So both can be used for selecting the relevant rows.
+
+arrange(): changes the ordering of the rows. The NAs always end up at the end of the rearranged tibble.
+
+select(): picks (or removes) variables based on their names.
+
+starts_with() / ends_with(): helper that selects every column tht starts with a prefix or ends with a suffix
+
+contains(): A select helper that selects any column containing a string of text.
+
+everything(): a select() helper that selects every column that has not already been selected. Good for reordering.
+
+rename(): changes the name of a column.
+
+mutate(): adds new variables that are functions of existing variables and preserves existing ones.
+
+transmute(): adds new variables and drops existing ones.
+
+bind_cols(): and bind_rows(): binds two tibbles column-wise or row-wise.
+
+group_by(): and summarize() reduces multiple values down to a single summary.
+
+glimpse(): can be used to see the columns of the dataset and display some portion of the data with respect to each attribute that can fit on a single line. You can apply this function to get a glimpse of your dataset. It is similar to the base function str().
+
+typeof(): to asses the data type or mode of an object.
+
+Easy and fast parsing of date-times: ymd(), ymd_hms(), dmy(), dmy_hms, mdy(), …
+Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
+
