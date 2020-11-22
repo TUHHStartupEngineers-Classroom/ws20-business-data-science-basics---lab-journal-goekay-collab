@@ -1,205 +1,20 @@
----
-title: "Journal (reproducible report)"
-author: "Gökay Apusoglu"
-date: "2020-11-05"
-output:
-  html_document:
-    toc: true
-    toc_float: true
-    collapsed: false
-    number_sections: true
-    toc_depth: 3
-    #code_folding: hide
----
+# API CHALLANGE----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
-```
-
-Last compiled: `r Sys.Date()`
-
-This page includes the solution for the challange.
-
-# Intro to the tidyverse
-## Load libraries
-Libraries needed for importing and joining data is loaded :
-```{r}
-library(tidyverse)
-library(readxl)
-```
-## Importing Files
-Data is imported from the specified location :
-
-```{r}
-bikes_tbl <- read_excel("data/00_data/01_bike_sales/01_raw_data/bikes.xlsx")
-bikeshops_tbl <- read_excel("data/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
-orderlines_tbl <- read_excel("data/00_data/01_bike_sales/01_raw_data/orderlines.xlsx")
-```
-
-Imported bikeshops data :
-
-```{r}
-glimpse(bikeshops_tbl)
-```
-
-Imported orderlines data :
-```{r}
-glimpse(orderlines_tbl)
-```
-
-## Joining Data
-Joining both bikeshops and orderlines data to make the analysis easier :
-```{r}
-bike_orderlines_joined_tbl <- orderlines_tbl %>%
-  left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
-  left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-```
-
-## Wrangling Data
-States and cities are seperated from 'location' column :
-```{r}
-bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
-  # Separation of location column to city and state columns 
-  separate(col    = location,
-           into   = c("city", "state"),
-           sep    = ", ") %>%
-  
-  # Calculate total price (price * quantity) and add a total.price column 
-  mutate(total.price = price * quantity) %>%
-  
-  # Columns of interests are selected, reorgonized 
-  select(total.price,city,state,order.date)
-```
-
-
-Wrangled data that includes total sales, city,state and order date :
-```{r}
-glimpse(bike_orderlines_wrangled_tbl)
-```
-
-## Analysis of the data
-Libraries needed for this section are loaded :
-```{r}
-library(lubridate)
-```
-### Visualization of the total sale vs. state
-```{r}
-  # Manipulate data
-  sales_by_state_tbl <- bike_orderlines_wrangled_tbl %>%
-  
-  # Grouping by state and summarizing sales
-  group_by(state) %>% 
-  summarize(sales = sum(total.price)) %>%
-  
-  # Currency is adjusted to be euros
-  mutate(sales_text = scales::dollar(sales, big.mark = ".", 
-                                     decimal.mark = ",", 
-                                     prefix = "", 
-                                     suffix = " €"))
-```
-                                     
-Manipulated data :
-```{r}
-glimpse(sales_by_state_tbl)
-```
-
-Create a plot :
-```{r}
-sales_by_state_tbl %>%
-  
-  # Setup canvas with the columns states (x-axis) and sales (y-axis)
-  ggplot(aes(y = sales,x = state)) +
-  
-  # Geometries
-  geom_col(fill = "#2DC6D6") + # Use geom_col for a bar plot
-  geom_label(aes(label = sales_text)) + # Adding labels to the bars
-  geom_smooth(method = "lm", se = FALSE) + # Adding a trendline
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  # Formatting
-  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
-                                                    decimal.mark = ",", 
-                                                    prefix = "", 
-                                                    suffix = " €")) +
-  labs(
-    title    = "Total sale per state",
-    subtitle = "Upward Trend",
-    x = "States", # Override defaults for x and y
-    y = "Revenue"
-  )
-```
-
-### Visualization of the total sale per state vs. years
-```{r}
-# Manipulate data
-sales_by_year_tbl <- bike_orderlines_wrangled_tbl %>%
-    
-    # Select data of interest
-    select(order.date, total.price, state) %>%
-    mutate(year = year(order.date)) %>%
-    
-    # Group selected data and summarize year and main catgegory
-    group_by(year, state) %>%
-    summarise(sales = sum(total.price)) %>%
-    ungroup() %>%
-    # Formatting
-    mutate(sales_text = scales::dollar(sales, big.mark = ".", 
-                                     decimal.mark = ",", 
-                                     prefix = "", 
-                                     suffix = " €"))
-```
-
-Creation of plots :
-```{r plot, fig.width=10, fig.height=7}
-sales_by_year_tbl %>%
-  
-  # Set up x, y, fill
-  ggplot(aes(x = year, y = sales, fill = state)) +
-  
-  # Geometries
-  geom_col() + # Run up to here to get a stacked bar plot
-  
-  # Facet
-  facet_wrap(~ state) +
-  
-  # Formatting
-  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
-                                                    decimal.mark = ",", 
-                                                    prefix = "", 
-                                                    suffix = " €"))+
-  
-  labs(
-    title = "Revenue by year and main category",
-    subtitle = "Each product category has an upward trend",
-    fill = "Main category" # Changes the legend name
-  )
-```
-
-# Data Acquisition
-## API Challange
-```{r}
-# Load required libraries
+# 1.0 LIBRARIES ----
 library(httr)
 library(jsonlite)
-```
-Webpage which provides API usage. This is a webpage dedicated to J.R.R Tolkien's books and the fantasy world he created. From this database, i will create my own database focused on characters in that world.
-```{r}
+
 url_home <- "https://the-one-api.dev/v2/character"
-```
-Webpage requires access token for authentication. I took that token manually and assigned it to a variable.
-```{r}
+
 # Access token received manually from the server
 token="YkqtnI_bcHsdKwh6ZFgy"
-```
 
-```{r}
 # Send a GET request to the server by authorizing the request with token
 resp <- GET(url_home,add_headers(Authorization = paste("Bearer",token)))
 
 # Check response status to see whether the request was successfull
 resp
-```
 
-```{r}
 # Data conversion
 resp_JSON <- resp %>% 
   .$content %>% 
@@ -216,20 +31,17 @@ tibble(name=resp_JSON$docs$name,
        spouse=resp_JSON$docs$spouse,
        wikiUrl=resp_JSON$docs$wikiUrl
        )
-```
-## Web scrapping Challange
-### Load libraries
-```{r}
+
+# WEBSCRAPPING CHALLANGE----
+# 1.0 LIBRARIES ----
+
 library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
 library(rvest)     # HTML Hacking & Web Scraping
 library(xopen)     # Quickly opening URLs
 library(jsonlite)  # converts JSON files to R objects
 library(glue)      # concatenate strings
 library(stringi)   # character string/text processing
-```
 
-### Extract bike categories
-```{r}
 url_home <- "https://www.rosebikes.com/bikes"
 
 html_main=read_html(url_home)
@@ -250,9 +62,7 @@ bike_category_name_tbl <- html_main %>%
   select(category)
 
 bike_category_name_tbl
-```
-### Extract bike category urls
-```{r}
+
 bike_category_url_tbl <- html_main %>%
   
   # Get the nodes for the catagories ...
@@ -273,7 +83,6 @@ bike_category_url_tbl <- html_main %>%
   # We only need unique values
   distinct(url) %>%
   
-  # We are only interested with urls
   select(url)
 
 bike_category_data <- tibble(bike_category_name_tbl,bike_category_url_tbl)
@@ -281,10 +90,6 @@ bike_category_data <- tibble(bike_category_name_tbl,bike_category_url_tbl)
 # urls for sale and kids are eliminated
 bike_category_data <- bike_category_data[-(8:9),(1:2)]
 
-bike_category_data
-```
-### Create function to get subcategory data
-```{r}
 get_subcategory_data <- function(category,url){
 
   html_category  <- read_html(url)
@@ -330,11 +135,6 @@ get_subcategory_data <- function(category,url){
           bike_subcategory_url_tbl)
 }
 
-
-```
-### Create function to get model data
-
-```{r}
 get_model_data <- function(category,subcategory,url){
 
   html_subcategory <- read_html(url)
@@ -387,11 +187,11 @@ get_model_data <- function(category,subcategory,url){
          bike_subcategory_modelName,
          bike_subcategory_modelPrice)
 }
-```
-### Extract subcategory  data
-```{r}
+
+
 category <- bike_category_data$category
 url <- bike_category_data$url
+
 total_categoryNo=length(category)
 
 for (i in 1:total_categoryNo){
@@ -403,11 +203,6 @@ for (i in 1:total_categoryNo){
   }
 }
 
-subcategory_data
-```
-
-### Extract model  data
-```{r}
 category <- subcategory_data$category
 subcategory <- subcategory_data$subcategory
 subcategory_url <- subcategory_data$url
@@ -422,12 +217,4 @@ for (i in 1:total_subcategoryNo){
     module_data <- module_data %>% full_join(get_model_data(category[[i]],subcategory[[i]],subcategory_url[[i]]))
   }
 }
-```
-```{r}
-### Final extracted data
-module_data
-```
-# Data Wrangling
-
-# Data Visualization
 

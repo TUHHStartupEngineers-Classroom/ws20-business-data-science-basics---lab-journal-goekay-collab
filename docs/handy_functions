@@ -39,3 +39,50 @@ typeof(): to asses the data type or mode of an object.
 Easy and fast parsing of date-times: ymd(), ymd_hms(), dmy(), dmy_hms, mdy(), …
 Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
 
+DATA ACQUISITION-----------------------------------------------------------
+
+dbListTables(var) : to return the names of the tables that are available in the database
+
+tbl(var,"str") : To examine a table from a database
+
+collect() :  If we want to pull the data into local memory we have to chain this with tbl() function
+
+dbGetQuery() : to send a query
+
+dbDisconnect(var) : disconnect from database
+
+GET(URL) : make a query to the website
+
+glue('My name is {name}.') : writes the value of the name into string
+
+rawToChar(resp$content) : To convert the raw Unicode into a character vector that resembles the JSON format
+
+fromJSON() : convert JSON content into list data structure
+
+toJSON() : convert list data structure to JSON
+
+list() : creates a list from parameters given
+
+content(resp, as = "text") : accesses the body as a character vector as text.
+content(resp, as = "parsed") : accesses the body as a character vector as list.
+content(resp) : : accesses the body as a character vector as list.
+
+read_html(url): scrape entire HTML content from a given URL
+html_nodes(css = ".class""): calls node based on CSS class
+html_nodes(css = "#id""): calls node based on id
+html_nodes(xpath = "xpath"): calls node based on the given xpath
+html_attr()
+html_attrs(): identifies attributes
+html_text(): strips the HTML tags and extracts only the text
+html_table(): turns HTML tables into data frames
+
+str_detect(x, pattern) tells you if there’s any match to the pattern.
+str_count(x, pattern) counts the number of patterns.
+str_subset(x, pattern) extracts the matching components.
+str_locate(x, pattern) gives the position of the match.
+str_extract(x, pattern) extracts the text of the match.
+str_match(x, pattern) extracts parts of the match defined by parentheses.
+str_replace(x, pattern, replacement) / str_replace_all(x, pattern, replacement) replaces the matches with new text.#
+str_split(x, pattern)
+
+distinct(url)
