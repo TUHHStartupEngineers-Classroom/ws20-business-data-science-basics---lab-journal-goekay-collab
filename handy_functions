@@ -88,3 +88,31 @@ str_split(x, pattern)
 distinct(url)
 
 DATA WRANGLING-----------------------------------------------------------
+
+(1) Column operations :
+
+separate
+set_names(names(.) %>% str_replace_all("\\.", "_"))
+relocate(category_1:category_3) Rearrange columns: Put the category columns in front
+select(starts_with("model")) Select all columns that start with model
+pull(price) extracts content of a tibble column. Calculate the mean auf price
+select(where(is.character)) extract all character columns
+select(where(is.numeric)) 
+select(!where(is.numeric)) extract all non numeric columns
+rename() to rename one column at a time.
+set_names() to rename all columns at once.
+
+(2) Row operations :
+
+arrange(desc(price)) Select model and price and arrange the data by price in a descending orde
+filter(price > mean(price)) Filter rows, where price is greater than the mean of price
+filter(price > 5000,model %>% str_detect("Endurace")) Filter rows, where price is greater 5000 and the model contains “Endurace”
+filter(category_1 %in% c("Hybrid / City", "E-Bikes")) Filter rows, where the category_1 is “Hybrid / City” or “E-Bikes”. Use the %in% operator
+slice(1:5) filter the first 5 rows
+slice((nrow(.)-4):nrow(.)) filter the last 5 rows
+distinct(): Unique values  
+
+(3) Column transformations
+
+mutate(freight_costs = 2 * weight) Adding Column
+mutate(is_strive = model %>% str_to_lower() %>% str_detect("strive")) Add a column that equals to TRUE if model contains the word “strive”
