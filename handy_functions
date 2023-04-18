@@ -1,0 +1,118 @@
+# Usefull functions :
+
+pivot_longer : Use, if some of your column names are actually values of a variable. Alternatively you can use gather(), but it is recommended to use pivot_longer(), because the other function is no longer being maintained.
+
+pivot_wider(): Use, if some of your observations are scattered across many rows. Alternatively you can use spread(), but it is recommended to use pivot_wider(), because the other function is no longer being maintained.
+
+separate(): If some of your columns contain more than one value, use separate
+
+unite(): use to paste together multiple columns into one
+
+filter(): picks cases based on their values (formula based filtering).
+
+slice(): for filtering with row numbers. So both can be used for selecting the relevant rows.
+
+arrange(): changes the ordering of the rows. The NAs always end up at the end of the rearranged tibble.
+
+select(): picks (or removes) variables based on their names.
+
+starts_with() / ends_with(): helper that selects every column tht starts with a prefix or ends with a suffix
+
+contains(): A select helper that selects any column containing a string of text.
+
+everything(): a select() helper that selects every column that has not already been selected. Good for reordering.
+
+rename(): changes the name of a column.
+
+mutate(): adds new variables that are functions of existing variables and preserves existing ones.
+
+transmute(): adds new variables and drops existing ones.
+
+bind_cols(): and bind_rows(): binds two tibbles column-wise or row-wise.
+
+group_by(): and summarize() reduces multiple values down to a single summary.
+
+glimpse(): can be used to see the columns of the dataset and display some portion of the data with respect to each attribute that can fit on a single line. You can apply this function to get a glimpse of your dataset. It is similar to the base function str().
+
+typeof(): to asses the data type or mode of an object.
+
+Easy and fast parsing of date-times: ymd(), ymd_hms(), dmy(), dmy_hms, mdy(), …
+Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
+
+DATA ACQUISITION-----------------------------------------------------------
+
+dbListTables(var) : to return the names of the tables that are available in the database
+
+tbl(var,"str") : To examine a table from a database
+
+collect() :  If we want to pull the data into local memory we have to chain this with tbl() function
+
+dbGetQuery() : to send a query
+
+dbDisconnect(var) : disconnect from database
+
+GET(URL) : make a query to the website
+
+glue('My name is {name}.') : writes the value of the name into string
+
+rawToChar(resp$content) : To convert the raw Unicode into a character vector that resembles the JSON format
+
+fromJSON() : convert JSON content into list data structure
+
+toJSON() : convert list data structure to JSON
+
+list() : creates a list from parameters given
+
+content(resp, as = "text") : accesses the body as a character vector as text.
+content(resp, as = "parsed") : accesses the body as a character vector as list.
+content(resp) : : accesses the body as a character vector as list.
+
+read_html(url): scrape entire HTML content from a given URL
+html_nodes(css = ".class""): calls node based on CSS class
+html_nodes(css = "#id""): calls node based on id
+html_nodes(xpath = "xpath"): calls node based on the given xpath
+html_attr()
+html_attrs(): identifies attributes
+html_text(): strips the HTML tags and extracts only the text
+html_table(): turns HTML tables into data frames
+
+str_detect(x, pattern) tells you if there’s any match to the pattern.
+str_count(x, pattern) counts the number of patterns.
+str_subset(x, pattern) extracts the matching components.
+str_locate(x, pattern) gives the position of the match.
+str_extract(x, pattern) extracts the text of the match.
+str_match(x, pattern) extracts parts of the match defined by parentheses.
+str_replace(x, pattern, replacement) / str_replace_all(x, pattern, replacement) replaces the matches with new text.#
+str_split(x, pattern)
+
+distinct(url)
+
+DATA WRANGLING-----------------------------------------------------------
+
+(1) Column operations :
+
+separate
+set_names(names(.) %>% str_replace_all("\\.", "_"))
+relocate(category_1:category_3) Rearrange columns: Put the category columns in front
+select(starts_with("model")) Select all columns that start with model
+pull(price) extracts content of a tibble column. Calculate the mean auf price
+select(where(is.character)) extract all character columns
+select(where(is.numeric)) 
+select(!where(is.numeric)) extract all non numeric columns
+rename() to rename one column at a time.
+set_names() to rename all columns at once.
+
+(2) Row operations :
+
+arrange(desc(price)) Select model and price and arrange the data by price in a descending orde
+filter(price > mean(price)) Filter rows, where price is greater than the mean of price
+filter(price > 5000,model %>% str_detect("Endurace")) Filter rows, where price is greater 5000 and the model contains “Endurace”
+filter(category_1 %in% c("Hybrid / City", "E-Bikes")) Filter rows, where the category_1 is “Hybrid / City” or “E-Bikes”. Use the %in% operator
+slice(1:5) filter the first 5 rows
+slice((nrow(.)-4):nrow(.)) filter the last 5 rows
+distinct(): Unique values  
+
+(3) Column transformations
+
+mutate(freight_costs = 2 * weight) Adding Column
+mutate(is_strive = model %>% str_to_lower() %>% str_detect("strive")) Add a column that equals to TRUE if model contains the word “strive”

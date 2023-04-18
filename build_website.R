@@ -14,8 +14,8 @@ rmarkdown::render_site(encoding = 'UTF-8')
 ##########################################################################
 ###### THIS WILL ONLY WORK IF YOU HAVE STATICRYPT INSTALLED VIA NPM ######
 ##########################################################################
-
-system( paste0("staticrypt ./docs/journal.html ", Sys.getenv("LAB_KEY")) )
+setwd("~/GitHub/ws20-business-data-science-basics---lab-journal-goekay-collab")
+system( paste0("staticrypt ./docs/journal.html", Sys.getenv("LAB_KEY")) )
 
 # Remove and rename resulting files
 file.remove("./docs/journal.html")
